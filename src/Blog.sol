@@ -3,10 +3,11 @@ pragma solidity ^0.8.13;
 
 contract Blog {
     // address owner;
-    mapping(address => uint256) paidEth;
+    mapping(address => uint256) public paidEth;
 
     struct PostData {
         string imageUrl;
+        string imageName;
         string assetId;
         string playbackId;
         string text;
@@ -19,9 +20,14 @@ contract Blog {
 
     event PostAdded(
         uint256 indexed postId,
+        address indexed author,
         string[] indexed tags,
-        address author,
-        uint256 value
+        uint256 value,
+        string imageUrl,
+        string imageName,
+        string assetId,
+        string playbackId,
+        string text
     );
     event AuthorRewarded(address indexed author, uint256 reward);
 
@@ -35,6 +41,7 @@ contract Blog {
 
     function post(
         string memory _imageUrl,
+        string memory _imageName,
         string memory _assetId,
         string memory _playbackId,
         string memory _text,
@@ -46,12 +53,23 @@ contract Blog {
         postsByAuthor[msg.sender].push(postId);
         posts[postId] = PostData({
             imageUrl: _imageUrl,
+            imageName: _imageName,
             assetId: _assetId,
             playbackId: _playbackId,
             text: _text,
             tags: _tags
         });
-        emit PostAdded(postId, _tags, msg.sender, msg.value);
+        emit PostAdded(
+            postId,
+            msg.sender,
+            _tags,
+            msg.value,
+            _imageUrl,
+            _imageName,
+            _assetId,
+            _playbackId,
+            _text
+        );
 
         // Notify the author using the push protocol
         // ...
@@ -74,17 +92,17 @@ contract Blog {
         return result;
     }
 
-    function getAllPostsByCount(uint256 postCount)
-        public
-        view
-        returns (PostData[] memory)
-    {
-        PostData[] memory result = new PostData[](postCount);
-        for (uint256 i = 0; i < postCount; i++) {
-            result[i] = posts[i];
-        }
-        return result;
-    }
+    // function getAllPostsByCount(uint256 postCount)
+    //     public
+    //     view
+    //     returns (PostData[] memory)
+    // {
+    //     PostData[] memory result = new PostData[](postCount);
+    //     for (uint256 i = 0; i < postCount; i++) {
+    //         result[i] = posts[i];
+    //     }
+    //     return result;
+    // }
 
     function getPostById(uint256 _postId)
         public
