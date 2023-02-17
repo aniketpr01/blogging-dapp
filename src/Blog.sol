@@ -10,6 +10,7 @@ contract Blog {
         string imageName;
         string assetId;
         string playbackId;
+        string title;
         string text;
         string[] tags;
     }
@@ -19,15 +20,16 @@ contract Blog {
     uint256 postId;
 
     event PostAdded(
-        uint256 indexed postId,
-        address indexed author,
-        string[] indexed tags,
+        uint256 postId,
+        address author,
+        string text,
+        string[] tags,
         uint256 value,
         string imageUrl,
         string imageName,
         string assetId,
         string playbackId,
-        string text
+        string title
     );
     event AuthorRewarded(address indexed author, uint256 reward);
 
@@ -44,6 +46,7 @@ contract Blog {
         string memory _imageName,
         string memory _assetId,
         string memory _playbackId,
+        string memory _title,
         string memory _text,
         string[] memory _tags
     ) public payable {
@@ -56,19 +59,21 @@ contract Blog {
             imageName: _imageName,
             assetId: _assetId,
             playbackId: _playbackId,
+            title: _title,
             text: _text,
             tags: _tags
         });
         emit PostAdded(
             postId,
             msg.sender,
+            _text,
             _tags,
             msg.value,
             _imageUrl,
             _imageName,
             _assetId,
             _playbackId,
-            _text
+            _title
         );
 
         // Notify the author using the push protocol
